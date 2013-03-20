@@ -10,7 +10,7 @@ var IMAGE_SERVICES = [
         test: /^http:\/\/monosnap.com\//i,
         link: function(href) {
             return 'http://test.api.monosnap.com/image/download?id=' +
-                href.match(/(\w+)$/)[1];
+                href.match(/(\w+)\/?$/)[1];
         }
     },
     {
