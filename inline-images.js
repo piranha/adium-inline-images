@@ -18,6 +18,14 @@ var IMAGE_SERVICES = [
         link: function(href) {
             return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
         }
+    },
+    {
+        test: /^https:\/\/i.chzbgr.com\//,
+        link: function (href) { return href; }
+    },
+    {
+        test: /^http:\/\/img-fotki.yandex.ru\/get\//,
+        link: function (href) { return href; }
     }
 ];
 
