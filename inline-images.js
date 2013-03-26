@@ -37,6 +37,7 @@ function inlineImage(node, imageUrl) {
     img.className = 'inlineImage';
     img.setAttribute('data-txt', node.innerHTML);
     img.setAttribute('data-href', node.href);
+    img.setAttribute('style', 'max-width: 100%; max-height: 100%;');
 
     node.parentNode.replaceChild(img, node);
     img.addEventListener('click', revertImage);
