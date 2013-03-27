@@ -21,11 +21,17 @@ This list can be improved, read more to learn how.
 How to use
 ----------
 
-Right now it's all manual, but not very hard:
+Clone a repo and run `install.sh` with your style name as parameter, i.e.:
 
-1) Find your style directory: it's located in `"~/Library/Application Data/Adium
-2.0/Message Styles/Name Of Your Style"`. You can check name of your style in
-Adium's Preferences -> Messages.
+    ./install.sh minimal_mod
+
+If you want to go manual road, it's not very hard (check contents of
+`install.sh` if you want):
+
+1) Find your style directory: it's either located in
+`"/Applications/Adium.app/Contents/Resources/Message Styles/YourStyle"` or
+`"~/Library/Application Support/Adium 2.0/Message Styles/YourStyle"`. You can
+check name of your style in Adium's Preferences -> Messages.
 2) Put a file `inline-images.js` in `Contents/Resources` subdir of your style.
 3) Edit a file `Footer.html` (create it if it doesn't exist) in
 `Contents/Resources` subdir to add this line:
