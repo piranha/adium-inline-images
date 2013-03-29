@@ -1,31 +1,48 @@
 // (c) 2011-2013 Alexander Solovyov
 // under terms of ISC License
 
+function direct(href, cb) {
+    cb(href);
+}
+
 var IMAGE_SERVICES = [
     {
         test: /\.(png|jpg|jpeg|gif)$/i,
-        link: function(href) { return href; }
+        link: direct
     },
     {
         test: /^http:\/\/monosnap.com\//i,
-        link: function(href) {
-            return 'http://api.monosnap.com/image/download?id=' +
-                href.match(/(\w+)\/?$/)[1];
+        link: function(href, cb) {
+            cb('http://api.monosnap.com/image/download?id=' +
+               href.match(/(\w+)\/?$/)[1]);
         }
     },
     {
-        test: /^http:\/\/imgur.com\//i,
-        link: function(href) {
-            return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
+        test: /^http:\/\/imgur.com\/[\w\d]+$/i,
+        link: function(href, cb) {
+            cb(href.replace('imgur.com', 'i.imgur.com') + '.jpg');
         }
     },
     {
         test: /^https:\/\/i.chzbgr.com\//,
-        link: function (href) { return href; }
+        link: direct
     },
     {
         test: /^http:\/\/img-fotki.yandex.ru\/get\//,
-        link: function (href) { return href; }
+        link: direct
+    },
+    {
+        // this is not working :(
+        test: /^xxxhttp:\/\/\w+.wikipedia.org\/wiki\/File:/,
+        link: function(href, cb) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('get', href, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState != 4) return;
+                if (!(xhr.status < 300 && xhr.status >= 200)) return;
+                var data = xhr.responseText;
+            }
+        }
     }
 ];
 
@@ -64,7 +81,10 @@ function revertImage(e) {
 function handleLink(e) {
     var srv,
         matches,
-        href = e.target.href;
+        href = e.target.href,
+        handler = function(link) {
+            inlineImage(e.target, link);
+        };
 
     for (var i = 0; i < IMAGE_SERVICES.length; i++) {
         srv = IMAGE_SERVICES[i];
@@ -75,7 +95,7 @@ function handleLink(e) {
         if (matches) {
             e.preventDefault();
             e.stopPropagation();
-            inlineImage(e.target, srv.link(href));
+            srv.link(href, handler);
             return;
         }
     }
