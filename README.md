@@ -15,8 +15,13 @@ Supported services
 - Direct links to images
 - imgur.com
 - monosnap.com
+- chzbgr.com
+- img-fotki.yandex.ru
+- img.leprosorium.com
 
-This list can be improved, read more to learn how.
+[This list][1] can be improved, read more to learn how.
+
+[1]: https://github.com/piranha/adium-inline-images/blob/master/inline-images.js#L4
 
 How to use
 ----------
