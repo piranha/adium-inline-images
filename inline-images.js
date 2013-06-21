@@ -2,10 +2,10 @@
 // under terms of ISC License
 
 var IMAGE_SERVICES = [
-    {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        link: function(href) { return href; }
-    },
+    {test: /\.(png|jpg|jpeg|gif)$/i},
+    {test: /^https:\/\/i.chzbgr.com\//},
+    {test: /^http:\/\/img-fotki.yandex.ru\/get\//},
+    {test: /^http:\/\/img.leprosorium.com\//},
     {
         test: /^http:\/\/monosnap.com\/image\//i,
         link: function(href) {
@@ -18,14 +18,6 @@ var IMAGE_SERVICES = [
         link: function(href) {
             return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
         }
-    },
-    {
-        test: /^https:\/\/i.chzbgr.com\//,
-        link: function (href) { return href; }
-    },
-    {
-        test: /^http:\/\/img-fotki.yandex.ru\/get\//,
-        link: function (href) { return href; }
     }
 ];
 
@@ -75,7 +67,7 @@ function handleLink(e) {
         if (matches) {
             e.preventDefault();
             e.stopPropagation();
-            inlineImage(e.target, srv.link(href));
+            inlineImage(e.target, srv.link ? srv.link(href) : href);
             return;
         }
     }
