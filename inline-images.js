@@ -3,18 +3,20 @@
 
 var IMAGE_SERVICES = [
     {test: /\.(png|jpg|jpeg|gif)$/i},
-    {test: /^https:\/\/i.chzbgr.com\//},
-    {test: /^http:\/\/img-fotki.yandex.ru\/get\//},
-    {test: /^http:\/\/img.leprosorium.com\//},
+    {test: new RegExp('^https://i.chzbgr.com/')},
+    {test: new RegExp('^http://img-fotki.yandex.ru/get/')},
+    {test: new RegExp('^http://img.leprosorium.com/')},
     {
-        test: /^http:\/\/monosnap.com\/image\//i,
+        test: new RegExp('^http://(www\\.)?monosnap.com/image/', 'i'),
         link: function(href) {
             return 'http://api.monosnap.com/image/download?id=' +
                 href.match(/(\w+)\/?$/)[1];
         }
     },
     {
-        test: /^http:\/\/imgur.com\//i,
+        // all links which do not have slash as a second character in path,
+        // because imgur.com/a/stuff is an album and not an image
+        test: new RegExp('^http://imgur.com/.[^/]', 'i'),
         link: function(href) {
             return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
         }
