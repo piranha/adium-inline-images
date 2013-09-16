@@ -7,7 +7,7 @@ var IMAGE_SERVICES = [
     {test: new RegExp('^http://img-fotki.yandex.ru/get/')},
     {test: new RegExp('^http://img.leprosorium.com/')},
     {
-        test: new RegExp('^http://(www\\.)?monosnap.com/image/', 'i'),
+        test: new RegExp('^https?://(www\\.)?monosnap.com/image/', 'i'),
         link: function(href) {
             return 'http://api.monosnap.com/image/download?id=' +
                 href.match(/(\w+)\/?$/)[1];
