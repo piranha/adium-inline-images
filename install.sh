@@ -13,23 +13,23 @@ USER=~/Library/Application\ Support/Adium\ 2.0/Message\ Styles
 
 # find directory with message style
 if [ -d "$SYSTEM/$NAME" ]; then
-    PATH="$SYSTEM/$NAME"
+    DIR="$SYSTEM/$NAME"
 elif [ -d "$USER/$NAME" ]; then
-    PATH="$USER/$NAME"
+    DIR="$USER/$NAME"
 else
     echo "Cannot find directory with $NAME!"
     exit 1
 fi
 
-PATH="$PATH/Contents/Resources"
+DIR="$DIR/Contents/Resources"
 
 
 # put inline-images.js in place
-cp "$(dirname $0)/inline-images.js" "$PATH/"
+cp "$(dirname $0)/inline-images.js" "$DIR/"
 
 
 # write source to footer
-FOOTER="$PATH/Footer.html"
+FOOTER="$DIR/Footer.html"
 
 if [ ! -f "$FOOTER" ]; then
     touch $FOOTER
