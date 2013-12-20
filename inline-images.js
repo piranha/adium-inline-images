@@ -6,6 +6,7 @@ var IMAGE_SERVICES = [
     {test: new RegExp('^https://i.chzbgr.com/')},
     {test: new RegExp('^http://img-fotki.yandex.ru/get/')},
     {test: new RegExp('^http://img.leprosorium.com/')},
+    {test: new RegExp('^https?://pbs.twimg.com/media/')},
     {
         test: new RegExp('^https?://(www\\.)?monosnap.com/image/', 'i'),
         link: function(href) {
