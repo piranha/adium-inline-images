@@ -36,9 +36,9 @@ if [ ! -f "$FOOTER" ]; then
     touch $FOOTER
 fi
 
-# how do I do NOT here?
 if /usr/bin/grep inline-images.js "$FOOTER" > /dev/null; then
-    true
+    echo 'It was already installed'
 else
     echo '<script type="text/javascript" src="inline-images.js"></script>' >> "$FOOTER"
+    echo 'Installation successful'
 fi

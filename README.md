@@ -43,7 +43,9 @@ If you want to go manual road, it's not very hard (check contents of
 3. Edit a file `Footer.html` (create it if it doesn't exist) in
    `Contents/Resources` subdir to add this line:
 
-    <script type="text/javascript" src="inline-images.js"></script>
+```
+<script type="text/javascript" src="inline-images.js"></script>
+```
 
 This is it! Restart Adium and it should work.
 
