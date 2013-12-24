@@ -1,15 +1,14 @@
 #!/bin/sh
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 your-style-name"
+    echo "Usage: $0 YourStyleName"
     exit
 fi
 
 
 NAME="$1.AdiumMessageStyle"
-SYSTEM=/Applications/Adium.app/Contents/Resources/Message\ Styles
-USER=~/Library/Application\ Support/Adium\ 2.0/Message\ Styles
-
+SYSTEM="/Applications/Adium.app/Contents/Resources/Message Styles"
+USER="$HOME/Library/Application Support/Adium 2.0/Message Styles"
 
 # find directory with message style
 if [ -d "$SYSTEM/$NAME" ]; then
@@ -20,6 +19,8 @@ else
     echo "Cannot find directory with $NAME!"
     exit 1
 fi
+
+exit 0
 
 DIR="$DIR/Contents/Resources"
 
