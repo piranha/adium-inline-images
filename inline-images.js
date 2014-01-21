@@ -9,22 +9,24 @@ var IMAGE_SERVICES = [
     {test: new RegExp('^http://img.leprosorium.com/')},
     {test: new RegExp('^https?://pbs.twimg.com/media/')},
     {
-        test: new RegExp('^https?://(www\\.)?monosnap.com/image/', 'i'),
-        link: function(href) {
-            return 'http://api.monosnap.com/image/download?id=' +
-                href.match(/(\w+)\/?$/)[1];
+        test: new RegExp('^https?://(www\\.)?monosnap.com/image/(\\w+)', 'i'),
+        link: function(href, m) {
+            return 'http://api.monosnap.com/image/download?id=' + m[1];
         }
     },
     {
         // all links which do not have slash as a second character in path,
         // because imgur.com/a/stuff is an album and not an image
         test: new RegExp('^http://imgur.com/.[^/]', 'i'),
-        link: function(href) {
+        link: function(href, m) {
             return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
         }
     },
     {
         test: new RegExp('^https?://twitter.com/[^/]+/status/\\d+'),
+        link: function(href, m) {
+            return m[0];
+        },
         createNode: function(href, cb) {
             JSONP.get('https://api.twitter.com/1/statuses/oembed.json',
                      {url: href},
@@ -46,8 +48,8 @@ function defaultCreateNode(href, cb) {
     cb(img);
 }
 
-function inlineNode(node, href, rule) {
-    var imageUrl = rule.link ? rule.link(href) : href;
+function inlineNode(node, href, m, rule) {
+    var imageUrl = rule.link ? rule.link(href, m) : href;
     var shouldScroll = coalescedHTML.shouldScroll || nearBottom();
     var createNode = rule.createNode || defaultCreateNode;
 
@@ -97,7 +99,7 @@ function handleLink(e) {
         if (matches) {
             e.preventDefault();
             e.stopPropagation();
-            return inlineNode(e.target, href, rule);
+            return inlineNode(e.target, href, matches, rule);
         }
     }
 }
