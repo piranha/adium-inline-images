@@ -1,8 +1,40 @@
 // (c) 2011-2013 Alexander Solovyov
 // under terms of ISC License
 
-var UNIQUE_CLASS_NAME = 'very-inline-node';
+var UNIQUE_CLASS_NAME = 'adium-inline-' + Math.random();
 var IMAGE_SERVICES = [
+    {
+        test: new RegExp('^https?://en.wikipedia.org/wiki/File:(.*)', 'i'),
+        link: function(href, m) {
+            return 'File:' + m[1];
+        },
+        createNode: function(href, cb) {
+            XHR({
+                url: 'http://en.wikipedia.org/w/api.php',
+                method: 'GET',
+                responseType: 'json',
+                data: {
+                    action: 'query',
+                    prop: 'imageinfo',
+                    iiprop: 'url',
+                    format: 'json',
+                    titles: href
+                },
+                callback: function(err, data) {
+                    if (err) return alert(err);
+
+                    var pages = data.query.pages;
+                    var page = pages[Object.keys(pages)[0]];
+
+                    var img = document.createElement('img');
+                    img.src = page.imageinfo[0].url;
+                    img.setAttribute('style', 'max-width: 100%; max-height: 100%;');
+
+                    cb(img);
+                }
+            });
+        }
+    },
     {test: /\.(png|jpg|jpeg|gif)$/i},
     {test: new RegExp('^https://i.chzbgr.com/')},
     {test: new RegExp('^http://img-fotki.yandex.ru/get/')},
@@ -67,7 +99,8 @@ function inlineNode(node, href, m, rule) {
 
 function revertInline(orig) {
     return function(e) {
-        if (e.target.tagName === 'A') {
+        // just in case inner node has links
+        if (e.target.hasAttribute('href')) {
             return;
         }
 
@@ -75,12 +108,13 @@ function revertInline(orig) {
         e.stopPropagation();
 
         var node = e.target;
-        do {
+        while (node) {
             if (node.className === UNIQUE_CLASS_NAME) {
                 node.parentNode.replaceChild(orig, node);
                 break;
             }
-        } while (node = node.parentNode);
+            node = node.parentNode;
+        }
     };
 }
 
@@ -118,6 +152,18 @@ document.getElementById('Chat').addEventListener('click', function(e) {
 * BSD licensed
 */
 
+var dictToQs = function(dict) {
+    dict = dict || {};
+    var q = [], key;
+    for (key in dict) {
+        if (dict.hasOwnProperty(key)) {
+            q.push(encodeURIComponent(key) + "=" +
+                   encodeURIComponent(dict[key]));
+        }
+    }
+    return q.join('&');
+};
+
 var JSONP = (function(){
     var counter = 0, head, window = this, config = {};
 
@@ -153,18 +199,11 @@ var JSONP = (function(){
     }
 
     function jsonp(url, params, callback, callbackName) {
-        var query = (url||'').indexOf('?') === -1 ? '?' : '&', key;
+        var query = (url||'').indexOf('?') === -1 ? '?' : '&';
+        query += dictToQs(params);
 
         callbackName = (callbackName || config.callbackName || 'callback');
         var uniqueName = callbackName + "_json" + (++counter);
-
-        params = params || {};
-        for (key in params) {
-            if ( params.hasOwnProperty(key) ) {
-                query += encodeURIComponent(key) + "=" +
-                    encodeURIComponent(params[key]) + "&";
-            }
-        }
 
         window[uniqueName] = function(data){
             callback(data);
@@ -184,3 +223,43 @@ var JSONP = (function(){
 
     return {get: jsonp, init: setDefaults};
 }());
+
+/*
+ * Simplest XHR helper
+ * (c) 2014 Alexander Solovyov
+ * ISC Licensed
+ */
+
+var XHR = function(opts) {
+    var url = opts.url, data = opts.data;
+    if (opts.method === 'GET') {
+        url += '?' + dictToQs(data);
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open(opts.method, url, true);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4)
+            return;
+
+        if (!((xhr.status >= 200) && (xhr.status < 300))) {
+            return opts.callback(xhr.status);
+        }
+
+        var resp = xhr.responseText;
+        if (opts.responseType === 'json') {
+            resp = resp && JSON.parse(resp) || {};
+        }
+        return opts.callback(null, resp);
+    };
+
+    if (opts.method === 'GET') {
+        xhr.send();
+    } else {
+        if (data && typeof data !== 'string') {
+            data = dictToQs(data);
+        }
+        xhr.send(data);
+    }
+};
