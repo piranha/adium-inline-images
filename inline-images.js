@@ -213,7 +213,7 @@ var JSONP = (function(){
             } catch (e) {}
         };
 
-        load(url + query + callbackName + '=' + uniqueName);
+        load(url + query + '&' + callbackName + '=' + uniqueName);
         return uniqueName;
     }
 
