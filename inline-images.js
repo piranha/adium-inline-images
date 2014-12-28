@@ -1,4 +1,4 @@
-// (c) 2011-2013 Alexander Solovyov
+// (c) 2011-2015 Alexander Solovyov
 // under terms of ISC License
 
 var UNIQUE_CLASS_NAME = 'adium-inline-' + Math.random();
@@ -47,9 +47,30 @@ var IMAGE_SERVICES = [
         }
     },
     {
+        test: new RegExp('^https?://(?:i.)?imgur.com/([^/]*)\.gifv', 'i'),
+        link: function(href, m) {
+            return 'http://i.imgur.com/' + m[1] + '.mp4';
+        },
+        createNode: function(href, cb) {
+            var video = document.createElement('video');
+            video.setAttribute('style', 'max-width: 100%; max-height: 100%;');
+            video.setAttribute('preload', 'auto');
+            video.setAttribute('autoplay', 'autoplay');
+            video.setAttribute('loop', 'loop');
+            video.setAttribute('webkit-playsinline', '');
+
+            var source = document.createElement('source');
+            source.src = href;
+            source.type = 'video/mp4';
+
+            video.appendChild(source);
+            cb(video);
+        },
+    },
+    {
         // all links which do not have slash as a second character in path,
         // because imgur.com/a/stuff is an album and not an image
-        test: new RegExp('^http://imgur.com/.[^/]', 'i'),
+        test: new RegExp('^https?://imgur.com/.[^/]', 'i'),
         link: function(href, m) {
             return href.replace('imgur.com', 'i.imgur.com') + '.jpg';
         }
@@ -85,13 +106,14 @@ function inlineNode(node, href, m, rule) {
     var shouldScroll = coalescedHTML.shouldScroll || nearBottom();
     var createNode = rule.createNode || defaultCreateNode;
 
-    createNode(imageUrl, function(inline) {
-        inline.className = UNIQUE_CLASS_NAME;
-        node.parentNode.replaceChild(inline, node);
-        inline.addEventListener('click', revertInline(node));
+    createNode(imageUrl, function(mediaEl) {
+        mediaEl.className = UNIQUE_CLASS_NAME;
+        node.parentNode.replaceChild(mediaEl, node);
+        mediaEl.addEventListener('click', revertInline(node));
 
         if (shouldScroll) {
-            inline.addEventListener('load', scrollToBottom);
+            mediaEl.addEventListener('load', scrollToBottom);
+            mediaEl.addEventListener('canplay', scrollToBottom);
         }
     });
 }
