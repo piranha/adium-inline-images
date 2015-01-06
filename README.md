@@ -12,14 +12,7 @@ key (Control, Command, Alt, Shift).
 Supported services
 ------------------
 
-- Direct links to images
-- imgur.com
-- monosnap.com
-- chzbgr.com
-- img-fotki.yandex.ru
-- img.leprosorium.com
-
-[This list][1] can be improved, read more to learn how.
+[Look here][1] for a current list of services that work.
 
 [1]: https://github.com/piranha/adium-inline-images/blob/master/inline-images.js#L4
 
@@ -57,12 +50,16 @@ Adding a new service
 File `inline-images.js` contains a variable named `IMAGE_SERVICES`. This is a
 list of objects, each defining a service. Those objects have two properties:
 
-1. `test` - either a regular expression, matching given link, or a function,
-   which can perform custom matching (should return boolean if this service
-   supports this link).
+1. `test` (`Re | Str -> Whatever`) - either a regexp, matching given link, or a
+   function, which can perform custom matching (should return truthy value if
+   this service supports this link).
 
-2. `link` - is a function, which should return a source url of an image by given
-   link.
+2. `link` (`[Str] -> Str`, optional) - a function, which takes a regexp matches
+   from `test` (or its return value) and returns a link to image.
+
+3. `createNode` (`Str -> Fn -> Node`, optional) - a function which takes a link
+   and a callback, and should call this callback with node to render. See
+   sources for examples - Wikipedia, Twitter and Imgur's gifv in particular.
 
 Add new service, send a pull request, and let the glory of inline images spread
 all over the world!
